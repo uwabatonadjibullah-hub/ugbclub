@@ -17,6 +17,7 @@ export default function Sidebar() {
         <NavLink to="/players" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Manage Players</NavLink>
         <NavLink to="/statistics" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Player Statistics</NavLink>
         <NavLink to="/payment" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Payment Settings</NavLink>
+        <NavLink to="/settings" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Site Settings</NavLink>
         <NavLink to="/admins" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Admins</NavLink>
       </nav>
     </aside>

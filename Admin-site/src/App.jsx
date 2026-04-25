@@ -14,6 +14,7 @@ import Orders from './pages/Orders';
 import Admins from './pages/Admins';
 import Matches from './pages/Matches';
 import Statistics from './pages/Statistics';
+import SiteSettings from './pages/SiteSettings';
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
           <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><SiteSettings /></ProtectedRoute>} />
           <Route path="/admins" element={<ProtectedRoute><Admins /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
