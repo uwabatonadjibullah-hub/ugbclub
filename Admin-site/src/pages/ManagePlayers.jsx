@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useConfirm } from '../context/ConfirmContext';
 
@@ -50,6 +50,19 @@ export default function ManagePlayers() {
     }
   };
 
+  const handleDelete = async (id, name) => {
+    const isConfirmed = await showConfirm(`Are you sure you want to PERMANENTLY delete ${name}? This cannot be undone.`);
+    if (isConfirmed) {
+      try {
+        await deleteDoc(doc(db, 'players', id));
+        setMsg('Player deleted successfully');
+      } catch {
+        setMsg('Error deleting player');
+      }
+      setTimeout(() => setMsg(''), 3000);
+    }
+  };
+
   const active = players.filter(p => p.status === 'active');
   const departed = players.filter(p => p.status === 'departed');
 
@@ -71,7 +84,8 @@ export default function ManagePlayers() {
                   <td>{p.position}</td>
                   <td style={{display:'flex', gap:'1rem'}}>
                     <button onClick={() => startEdit(p)} style={{color:'var(--accent)',textDecoration:'underline'}}>Edit</button>
-                    <button onClick={() => handleDepart(p.id)} style={{color:'var(--loss)',textDecoration:'underline'}}>Depart</button>
+                    <button onClick={() => handleDepart(p.id)} style={{color:'var(--accent)',textDecoration:'underline'}}>Depart</button>
+                    <button onClick={() => handleDelete(p.id, p.name)} style={{color:'var(--loss)',textDecoration:'underline'}}>Delete</button>
                   </td>
                 </tr>
               ))}
@@ -80,10 +94,17 @@ export default function ManagePlayers() {
           </table>
           <h3 className="chart-box__title" style={{marginTop:'2rem'}}>Former Players</h3>
           <table className="admin-table">
-            <thead><tr><th>#</th><th>Name</th><th>Departed</th></tr></thead>
+            <thead><tr><th>#</th><th>Name</th><th>Departed</th><th>Action</th></tr></thead>
             <tbody>
               {departed.map(p => (
-                <tr key={p.id}><td>{p.number}</td><td>{p.name}</td><td>{p.departedDate ? new Date(p.departedDate).toLocaleDateString() : '—'}</td></tr>
+                <tr key={p.id}>
+                  <td>{p.number}</td>
+                  <td>{p.name}</td>
+                  <td>{p.departedDate ? new Date(p.departedDate).toLocaleDateString() : '—'}</td>
+                  <td>
+                    <button onClick={() => handleDelete(p.id, p.name)} style={{color:'var(--loss)',textDecoration:'underline'}}>Delete</button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
