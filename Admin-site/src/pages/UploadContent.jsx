@@ -39,7 +39,7 @@ export default function UploadContent() {
             <div className="form-group"><label className="form-label">Title</label><input type="text" required className="form-input" value={mediaData.title} onChange={e=>setMediaData({...mediaData, title:e.target.value})} /></div>
             <div className="form-row">
               <div className="form-group"><label className="form-label">Type</label><select className="form-input" value={mediaData.type} onChange={e=>setMediaData({...mediaData, type:e.target.value})}><option>Highlights</option><option>Documentary Feature</option><option>Vlog</option><option>Spotlight</option></select></div>
-              <div className="form-group"><label className="form-label">Thumbnail URL</label><input type="url" required className="form-input" value={mediaData.thumbnailURL} onChange={e=>setMediaData({...mediaData, thumbnailURL:e.target.value})} /></div>
+              <div className="form-group"><label className="form-label">Thumbnail URL (Optional)</label><input type="url" className="form-input" value={mediaData.thumbnailURL} onChange={e=>setMediaData({...mediaData, thumbnailURL:e.target.value})} /></div>
             </div>
             <div className="form-group"><label className="form-label">YouTube Embed Code</label><textarea required className="form-input" rows="3" value={mediaData.embedCode} onChange={e=>setMediaData({...mediaData, embedCode:e.target.value})} placeholder='<iframe src="https://www.youtube.com/embed/..." ...></iframe>' /></div>
             <div className="form-group"><label style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><input type="checkbox" checked={mediaData.featured} onChange={e=>setMediaData({...mediaData, featured:e.target.checked})} /> Featured Video</label></div>

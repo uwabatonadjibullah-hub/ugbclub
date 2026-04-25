@@ -3,19 +3,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { seedData } from '../data/seedData';
 
-const demoActive = seedData.roster.map((p, i) => ({
-  id: `seed_p${i}`,
-  name: p.name,
-  number: p.number,
-  position: p.position,
-  photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop',
-  stats: { ppg: '0.0', reb: '0.0', ast: '0.0' },
-  status: 'active',
-}));
 
-const demoFormer = [
-  { id: 'pf1', name: 'Former Player', number: 3, position: 'GUARD', photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop', status: 'departed', departedDate: '2025-06-01', stats: { ppg: '14.2', reb: '4.1', ast: '3.8' } },
-];
 
 const POSITIONS = ['All', 'Guards', 'Forwards', 'Centers'];
 const posMap = { Guards: 'GUARD', Forwards: 'FORWARD', Centers: 'CENTER' };
@@ -25,6 +13,7 @@ export default function Roster() {
   const [former, setFormer] = useState([]);
   const [filter, setFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
@@ -34,11 +23,12 @@ export default function Roster() {
         const [aSnap, dSnap] = await Promise.all([getDocs(activeQ), getDocs(departedQ)]);
         const active = aSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const departed = dSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setPlayers(active.length > 0 ? active : demoActive);
-        setFormer(departed.length > 0 ? departed : demoFormer);
-      } catch {
-        setPlayers(demoActive);
-        setFormer(demoFormer);
+        setPlayers(active);
+        setFormer(departed);
+      } catch (e) {
+        console.warn('Roster fetch error:', e);
+      } finally {
+        setLoading(false);
       }
     };
     fetch();
@@ -90,12 +80,13 @@ export default function Roster() {
 
       {/* Active Players */}
       <div className="player-grid">
-        {filteredActive.map(player => (
+        {loading ? (
+          <p className="empty-state">Loading roster...</p>
+        ) : filteredActive.length === 0 ? (
+          <p className="empty-state">{searchQuery || filter !== 'All' ? "No active players match your search." : "No active players available."}</p>
+        ) : filteredActive.map(player => (
           <PlayerCard key={player.id} player={player} />
         ))}
-        {filteredActive.length === 0 && (
-          <p className="empty-state">No active players match your search.</p>
-        )}
       </div>
 
       {/* Former Players */}

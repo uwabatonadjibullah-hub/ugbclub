@@ -2,20 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { collection, query, getDocs, orderBy, doc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 
-const demoVideos = [
-  { id: 'm1', title: 'The Rise of UGB: Season 1', type: 'Documentary Feature', featured: true, thumbnailURL: 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=800&auto=format&fit=crop', viewCount: 1240 },
-  { id: 'm2', title: 'Training Camp: Week 1', type: 'Highlights', thumbnailURL: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop', viewCount: 380 },
-  { id: 'm3', title: "Coach's Locker Room Speech", type: 'Highlights', thumbnailURL: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop', viewCount: 520 },
-  { id: 'm4', title: 'Top 10 Plays of the Month', type: 'Highlights', thumbnailURL: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop', viewCount: 890 },
-  { id: 'm5', title: 'AZAM Partnership Reveal', type: 'Highlights', thumbnailURL: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop', viewCount: 312 },
-  { id: 'm6', title: 'Player Spotlight: #12', type: 'Spotlight', thumbnailURL: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop', viewCount: 760 },
-  { id: 'm7', title: 'Road Game Vlog', type: 'Vlog', thumbnailURL: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop', viewCount: 418 },
-];
+
 
 export default function MediaVault() {
   const [media, setMedia] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [playing, setPlaying] = useState(null);
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
@@ -23,8 +17,12 @@ export default function MediaVault() {
         const q = query(collection(db, 'media'), orderBy('createdAt', 'desc'));
         const snap = await getDocs(q);
         const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setMedia(data.length > 0 ? data : demoVideos);
-      } catch { setMedia(demoVideos); }
+        setMedia(data);
+      } catch (e) {
+        console.warn('Media fetch error:', e);
+      } finally {
+        setLoading(false);
+      }
     };
     fetch();
   }, []);
@@ -67,10 +65,15 @@ export default function MediaVault() {
 
       {/* Grid */}
       <div className="media-grid">
-        {filtered.map(m => (
-          <VideoCard key={m.id} media={m} onPlay={() => setPlaying(m.id)} playing={playing === m.id} />
-        ))}
-        {filtered.length === 0 && <p className="empty-state">No videos found.</p>}
+        {loading ? (
+          <p className="empty-state">Loading videos...</p>
+        ) : filtered.length === 0 ? (
+          <p className="empty-state">No videos found.</p>
+        ) : (
+          filtered.map(m => (
+            <VideoCard key={m.id} media={m} onPlay={() => setPlaying(m.id)} playing={playing === m.id} />
+          ))
+        )}
       </div>
     </div>
   );

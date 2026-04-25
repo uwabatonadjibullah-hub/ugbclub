@@ -11,6 +11,7 @@ export default function Home() {
   const [schedule, setSchedule] = useState([]);
   const [players, setPlayers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [addedId, setAddedId] = useState(null);
 
   useEffect(() => {
@@ -41,9 +42,9 @@ export default function Home() {
       } catch (e) { console.warn('Products fetch:', e); }
     };
 
-    fetchSchedule();
-    fetchPlayers();
-    fetchProducts();
+    Promise.all([fetchSchedule(), fetchPlayers(), fetchProducts()]).finally(() => {
+      setLoading(false);
+    });
   }, []);
 
   const handleAddToCart = (product) => {
@@ -52,32 +53,7 @@ export default function Home() {
     setTimeout(() => setAddedId(null), 600);
   };
 
-  // Fallback demo schedule cards
-  const demoSchedule = [
-    { id: 's1', status: 'upcoming', date: '2026-05-28', time: '18:00', opponent: 'Opponent Team', opponentAbbr: 'OPP', venue: 'BK Arena' },
-    { id: 's2', status: 'completed', date: '2026-05-25', opponent: 'Patriots BBC', opponentAbbr: 'PAT', venue: 'LDK Court', ugbScore: 82, opponentScore: 75, result: 'win' },
-    { id: 's3', status: 'completed', date: '2026-05-21', opponent: 'REG BBC', opponentAbbr: 'REG', venue: 'BK Arena', ugbScore: 68, opponentScore: 74, result: 'loss', isAway: true },
-  ];
-  const displaySchedule = schedule.length > 0 ? schedule : demoSchedule;
 
-  // Fallback demo players
-  const demoPlayers = [
-    { id: 'p1', name: 'N. Player', number: 11, position: 'GUARD', photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop' },
-    { id: 'p2', name: 'J. Doe', number: 12, position: 'FORWARD', photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop' },
-    { id: 'p3', name: 'A. Smith', number: 13, position: 'CENTER', photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop' },
-    { id: 'p4', name: 'D. Mugarura', number: 14, position: 'GUARD', photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop' },
-    { id: 'p5', name: 'K. Ndoli', number: 15, position: 'FORWARD', photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop' },
-  ];
-  const displayPlayers = players.length > 0 ? players : demoPlayers;
-
-  // Fallback demo products
-  const demoProducts = [
-    { id: 'prod_001', name: 'UGB Official Home Jersey (Sky Blue)', category: 'Authentic', price: 35000, imageURL: 'https://images.unsplash.com/photo-1504198458649-3128b932f49e?q=80&w=600&auto=format&fit=crop', isNew: true },
-    { id: 'prod_002', name: 'UGB Warm-up Hoodie (Dark Grey)', category: 'Lifestyle', price: 45000, imageURL: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600&auto=format&fit=crop' },
-    { id: 'prod_003', name: 'United Generation Graphic Tee', category: 'Fan Gear', price: 15000, imageURL: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600&auto=format&fit=crop' },
-    { id: 'prod_004', name: 'UGB Official Logo Snapback', category: 'Accessories', price: 12500, imageURL: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=600&auto=format&fit=crop' },
-  ];
-  const displayProducts = products.length > 0 ? products : demoProducts;
 
   return (
     <div className="page-fade">
@@ -88,8 +64,8 @@ export default function Home() {
         <div className="hero__content">
           <div className="hero__badge">Official Digital Home</div>
           <h1 className="hero__title">
-            The <span className="hero__title--accent">Future</span><br />
-            Of Rwandan<br />
+            The <span className="hero__title--accent">UNITED</span><br />
+            Generation for<br />
             Basketball.
           </h1>
           <p className="hero__sub">
@@ -98,11 +74,11 @@ export default function Home() {
           <div className="hero__actions">
             <button className="btn btn--primary" onClick={() => navigate('/schedule')}>
               Match Center
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </button>
             <button className="btn btn--ghost" onClick={() => navigate('/media')}>
               Watch Highlights
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" /></svg>
             </button>
           </div>
         </div>
@@ -117,7 +93,7 @@ export default function Home() {
             onViewAll={() => navigate('/schedule')}
             scrollAmount={480}
           >
-            {displaySchedule.map(game => (
+            {loading ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div> : schedule.length === 0 ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div> : schedule.map(game => (
               <div key={game.id} className={`match-card${game.status === 'upcoming' ? ' match-card--next' : ''}`}>
                 <div className="match-card__header">
                   {game.status === 'upcoming'
@@ -166,7 +142,7 @@ export default function Home() {
             onViewAll={() => navigate('/roster')}
             scrollAmount={320}
           >
-            {displayPlayers.map(player => (
+            {loading ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div> : players.length === 0 ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div> : players.map(player => (
               <div key={player.id} className="player-card" onClick={() => navigate('/roster')}>
                 <div className="player-card__img">
                   <img
@@ -185,7 +161,7 @@ export default function Home() {
             {/* View All Card */}
             <div className="player-card player-card--view-all" onClick={() => navigate('/roster')}>
               <div className="view-all-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
               </div>
               <span>View All Players</span>
             </div>
@@ -203,7 +179,7 @@ export default function Home() {
             onViewAll={() => navigate('/store')}
             scrollAmount={360}
           >
-            {displayProducts.map(product => (
+            {loading ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div> : products.length === 0 ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div> : products.map(product => (
               <div key={product.id} className="product-card product-card--slider">
                 <div className="product-card__img">
                   <img src={product.imageURL} alt={product.name} />
@@ -219,9 +195,9 @@ export default function Home() {
                       onClick={() => handleAddToCart(product)}
                     >
                       {addedId === product.id ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
                       ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" /></svg>
                       )}
                     </button>
                   </div>

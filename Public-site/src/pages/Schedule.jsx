@@ -4,15 +4,14 @@ import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { seedData } from '../data/seedData';
 
-const demoGames = seedData.fixtures_2026.map((f, i) => ({
-  id: `seed_f${i}`,
-  ...f
-}));
+
 
 export default function Schedule() {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
@@ -20,8 +19,12 @@ export default function Schedule() {
         const q = query(collection(db, 'schedule'), orderBy('date', 'desc'));
         const snap = await getDocs(q);
         const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setGames(data.length > 0 ? data : demoGames);
-      } catch { setGames(demoGames); }
+        setGames(data);
+      } catch (e) {
+        console.warn('Schedule fetch:', e);
+      } finally {
+        setLoading(false);
+      }
     };
     fetch();
   }, []);
@@ -62,7 +65,11 @@ export default function Schedule() {
       </div>
 
       <div className="schedule-list">
-        {filtered.map(game => {
+        {loading ? (
+          <div className="empty-state">Loading schedule...</div>
+        ) : filtered.length === 0 ? (
+          <div className="empty-state">{searchQuery ? `No games found for "${searchQuery}"` : "No schedule available"}</div>
+        ) : filtered.map(game => {
           const { day, date, month } = fmt(game.date);
           return (
             <div key={game.id} className={`schedule-row${game.status === 'upcoming' ? ' schedule-row--upcoming' : ' schedule-row--past'}`}>
@@ -116,9 +123,8 @@ export default function Schedule() {
             </div>
           );
         })}
-        {filtered.length === 0 && (
-          <div className="empty-state">No games found for &ldquo;{searchQuery}&rdquo;</div>
-        )}
+          );
+        })}
       </div>
     </div>
   );

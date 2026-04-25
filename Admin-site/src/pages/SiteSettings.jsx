@@ -60,6 +60,14 @@ export default function SiteSettings() {
       setSettings(s => ({ ...s, partners: s.partners.filter((_, i) => i !== index) }));
     }
   };
+  const movePartner = (index, dir) => {
+    const newP = [...settings.partners];
+    if (index + dir < 0 || index + dir >= newP.length) return;
+    const temp = newP[index];
+    newP[index] = newP[index + dir];
+    newP[index + dir] = temp;
+    setSettings(s => ({ ...s, partners: newP }));
+  };
 
   // Quick Links
   const addLink = () => {
@@ -75,6 +83,14 @@ export default function SiteSettings() {
     if (isConfirmed) {
       setSettings(s => ({ ...s, quickLinks: s.quickLinks.filter((_, i) => i !== index) }));
     }
+  };
+  const moveLink = (index, dir) => {
+    const newL = [...settings.quickLinks];
+    if (index + dir < 0 || index + dir >= newL.length) return;
+    const temp = newL[index];
+    newL[index] = newL[index + dir];
+    newL[index + dir] = temp;
+    setSettings(s => ({ ...s, quickLinks: newL }));
   };
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading settings...</div>;
@@ -115,7 +131,9 @@ export default function SiteSettings() {
           <button type="button" onClick={addPartner} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--bg-lighter)' }}>+ Add Partner</button>
         </div>
         {settings.partners.map((p, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 3fr auto auto', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 2fr 3fr auto auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
+            <button type="button" onClick={() => movePartner(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === 0 ? 'default' : 'pointer', padding: '0.5rem' }}>▲</button>
+            <button type="button" onClick={() => movePartner(i, 1)} disabled={i === settings.partners.length - 1} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === settings.partners.length - 1 ? 'default' : 'pointer', padding: '0.5rem' }}>▼</button>
             <input type="text" className="admin-form__input" placeholder="Partner Name" value={p.name} onChange={e => updatePartner(i, 'name', e.target.value)} required />
             <input type="url" className="admin-form__input" placeholder="URL Link" value={p.url} onChange={e => updatePartner(i, 'url', e.target.value)} />
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
@@ -133,7 +151,9 @@ export default function SiteSettings() {
           <button type="button" onClick={addLink} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--bg-lighter)' }}>+ Add Link</button>
         </div>
         {settings.quickLinks.map((l, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr auto', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr 2fr auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
+            <button type="button" onClick={() => moveLink(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === 0 ? 'default' : 'pointer', padding: '0.5rem' }}>▲</button>
+            <button type="button" onClick={() => moveLink(i, 1)} disabled={i === settings.quickLinks.length - 1} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === settings.quickLinks.length - 1 ? 'default' : 'pointer', padding: '0.5rem' }}>▼</button>
             <input type="text" className="admin-form__input" placeholder="Link Display Text" value={l.name} onChange={e => updateLink(i, 'name', e.target.value)} required />
             <input type="text" className="admin-form__input" placeholder="URL (e.g. /schedule or https://...)" value={l.url} onChange={e => updateLink(i, 'url', e.target.value)} required />
             <button type="button" onClick={() => removeLink(i)} style={{ background: 'transparent', color: 'var(--loss)', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>&times;</button>
