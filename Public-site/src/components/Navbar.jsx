@@ -38,11 +38,7 @@ export default function Navbar() {
         <div className="navbar__inner">
           {/* Logo */}
           <NavLink to="/" className="navbar__logo" onClick={() => setMobileOpen(false)}>
-            <div className="logo-badge">
-              <div className="logo-badge__inner">
-                <span className="logo-badge__text">UGB</span>
-              </div>
-            </div>
+            <img src="/android-chrome-512x512.png" alt="UGB Logo" style={{ width: '3rem', height: '3rem', objectFit: 'contain', background: 'white', borderRadius: '50%', padding: '4px', transition: 'transform 0.2s' }} className="logo-img-hover" />
             <span className="navbar__brand">UNITED GENERATION</span>
           </NavLink>
 

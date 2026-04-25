@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,11 @@ export default function Payment() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  
+  // Customer Details
+  const [customer, setCustomer] = useState({ name: '', tel: '', location: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     if (cart.length === 0 && !orderPlaced) {
@@ -39,11 +44,29 @@ export default function Payment() {
     fetchPaymentInfo();
   }, [cart.length, navigate, orderPlaced]);
 
-  const handleConfirm = () => {
-    // In a real flow, this would save the order to Firestore here.
-    // For now, we simulate order placement and show success message.
-    setOrderPlaced(true);
-    clearCart();
+  const handleConfirm = async () => {
+    if (!customer.name || !customer.tel || !customer.location) {
+      setErrorMsg('Please fill in your Name, Telephone, and Location before confirming.');
+      return;
+    }
+    setSubmitting(true);
+    setErrorMsg('');
+    try {
+      await addDoc(collection(db, 'orders'), {
+        customerName: customer.name,
+        customerPhone: customer.tel,
+        location: customer.location,
+        items: cart,
+        total: totalPrice,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+      setOrderPlaced(true);
+      clearCart();
+    } catch (e) {
+      setErrorMsg('Failed to place order. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   if (loading) return <div className="page-fade page-container"><p className="empty-state">Loading payment information...</p></div>;
@@ -106,14 +129,32 @@ export default function Payment() {
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Total to Pay</span>
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.5rem', color: 'var(--accent)' }}>
               {new Intl.NumberFormat('en-RW').format(totalPrice)} RWF
             </span>
           </div>
-          <button className="btn btn--primary" style={{ width: '100%', padding: '1rem' }} onClick={handleConfirm}>
-            I Have Made the Payment
+
+          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', marginBottom: '1rem', marginTop: '2rem' }}>Delivery Details</h2>
+          {errorMsg && <p style={{ color: 'var(--loss)', fontSize: '0.875rem', marginBottom: '1rem' }}>{errorMsg}</p>}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Full Name</label>
+              <input type="text" style={{ width: '100%', background: 'var(--bg-dark)', border: '1px solid var(--bg-border)', padding: '0.75rem', borderRadius: '0.5rem', color: 'white', outline: 'none' }} value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} placeholder="Your Full Name" />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Telephone Number</label>
+              <input type="tel" style={{ width: '100%', background: 'var(--bg-dark)', border: '1px solid var(--bg-border)', padding: '0.75rem', borderRadius: '0.5rem', color: 'white', outline: 'none' }} value={customer.tel} onChange={e => setCustomer({...customer, tel: e.target.value})} placeholder="+250 78X XXX XXX" />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Delivery Location</label>
+              <input type="text" style={{ width: '100%', background: 'var(--bg-dark)', border: '1px solid var(--bg-border)', padding: '0.75rem', borderRadius: '0.5rem', color: 'white', outline: 'none' }} value={customer.location} onChange={e => setCustomer({...customer, location: e.target.value})} placeholder="Kigali, Gasabo..." />
+            </div>
+          </div>
+
+          <button className="btn btn--primary" style={{ width: '100%', padding: '1rem' }} onClick={handleConfirm} disabled={submitting}>
+            {submitting ? 'Placing Order...' : 'I Have Made the Payment'}
           </button>
         </div>
       </div>

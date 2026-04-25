@@ -10,6 +10,7 @@ import TradeDashboard from './pages/TradeDashboard';
 import UploadContent from './pages/UploadContent';
 import ManagePlayers from './pages/ManagePlayers';
 import PaymentMethods from './pages/PaymentMethods';
+import Orders from './pages/Orders';
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/trade" element={<ProtectedRoute><TradeDashboard /></ProtectedRoute>} />
+          <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
           <Route path="/upload" element={<ProtectedRoute><UploadContent /></ProtectedRoute>} />
           <Route path="/players" element={<ProtectedRoute><ManagePlayers /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />

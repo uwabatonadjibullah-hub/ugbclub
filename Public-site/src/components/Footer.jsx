@@ -11,11 +11,7 @@ export default function Footer() {
           {/* About */}
           <div className="footer__col">
             <NavLink to="/" className="footer__logo">
-              <div className="logo-badge logo-badge--sm">
-                <div className="logo-badge__inner">
-                  <span className="logo-badge__text">UGB</span>
-                </div>
-              </div>
+              <img src="/android-chrome-512x512.png" alt="UGB Logo" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain', background: 'white', borderRadius: '50%', padding: '4px', transition: 'transform 0.2s' }} />
               <span className="footer__brand">UNITED GENERATION</span>
             </NavLink>
             <p className="footer__about">
