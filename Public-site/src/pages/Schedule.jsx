@@ -123,8 +123,6 @@ export default function Schedule() {
             </div>
           );
         })}
-          );
-        })}
       </div>
     </div>
   );

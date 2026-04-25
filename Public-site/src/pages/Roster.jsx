@@ -36,7 +36,7 @@ export default function Roster() {
 
   const applyFilter = (list) => {
     return list.filter(p => {
-      const matchPos = filter === 'All' || p.position === posMap[filter];
+      const matchPos = filter === 'All' || (p.position && p.position.toUpperCase().includes(posMap[filter]));
       const matchSearch = !searchQuery ||
         p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         String(p.number).includes(searchQuery);
