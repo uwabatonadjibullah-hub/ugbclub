@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, getDocs, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { seedData } from '../data/seedData';
 
-const demoActive = Array.from({ length: 8 }, (_, i) => ({
-  id: `p${i + 1}`,
-  name: 'Player Name',
-  number: 9 + i + 1,
-  position: ['GUARD', 'FORWARD', 'CENTER', 'GUARD', 'FORWARD', 'GUARD', 'CENTER', 'FORWARD'][i],
+const demoActive = seedData.roster.map((p, i) => ({
+  id: `seed_p${i}`,
+  name: p.name,
+  number: p.number,
+  position: p.position,
   photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop',
-  stats: { ppg: (10 + (i + 1) * 1.5).toFixed(1), reb: (3 + (i + 1) * 0.8).toFixed(1), ast: (2 + i * 0.5).toFixed(1) },
+  stats: { ppg: '0.0', reb: '0.0', ast: '0.0' },
   status: 'active',
 }));
 

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { seedData } from '../data/seedData';
 
-const demoGames = [
-  { id: 's1', status: 'upcoming', date: '2026-05-28', time: '18:00', opponent: 'Opponent Team', opponentAbbr: 'OPP', venue: 'BK Arena', day: 'Sat' },
-  { id: 's2', status: 'completed', date: '2026-05-25', opponent: 'Patriots BBC', opponentAbbr: 'PAT', venue: 'LDK Court', ugbScore: 82, opponentScore: 75, result: 'win', day: 'Wed' },
-  { id: 's3', status: 'completed', date: '2026-05-21', opponent: 'REG BBC', opponentAbbr: 'REG', venue: 'BK Arena', ugbScore: 68, opponentScore: 74, result: 'loss', isAway: true, day: 'Sat' },
-];
+const demoGames = seedData.fixtures_2026.map((f, i) => ({
+  id: `seed_f${i}`,
+  ...f
+}));
 
 export default function Schedule() {
   const navigate = useNavigate();

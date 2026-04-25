@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, doc, getDoc, setDoc, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { seedData } from '../data/seedData';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ players: 0, products: 0, orders: 0, views: 0 });
   const [topPlayers, setTopPlayers] = useState([]);
   const [mediaViews, setMediaViews] = useState([]);
+  const [isSeeded, setIsSeeded] = useState(true);
+  const [seeding, setSeeding] = useState(false);
 
   useEffect(() => {
+    // Check if seeded
+    getDoc(doc(db, 'siteSettings', 'seeding')).then(snap => {
+      if (!snap.exists() || !snap.data().seeded) setIsSeeded(false);
+    });
     const unsubPlayers = onSnapshot(collection(db, 'players'), (snap) => {
       setStats(s => ({ ...s, players: snap.size }));
       const active = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.status === 'active');
@@ -32,10 +39,40 @@ export default function Dashboard() {
     return () => { unsubPlayers(); unsubProducts(); unsubOrders(); unsubMedia(); };
   }, []);
 
+  const handleSeedData = async () => {
+    if (!confirm('Are you sure you want to seed the Genius Sports data? This is a one-time action.')) return;
+    setSeeding(true);
+    try {
+      // Seed players
+      for (const p of seedData.roster) {
+        await addDoc(collection(db, 'players'), {
+          name: p.name, number: p.number, position: p.position,
+          photoURL: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop',
+          stats: { ppg: '0.0', reb: '0.0', ast: '0.0' }, status: 'active'
+        });
+      }
+      // Seed fixtures
+      for (const f of seedData.fixtures_2026) {
+        await addDoc(collection(db, 'schedule'), f);
+      }
+      // Mark as seeded
+      await setDoc(doc(db, 'siteSettings', 'seeding'), { seeded: true });
+      setIsSeeded(true);
+    } catch (e) {
+      alert('Seeding failed: ' + e.message);
+    }
+    setSeeding(false);
+  };
+
   return (
     <div className="page-container">
-      <div className="page-header">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 className="page-title">Dashboard</h1>
+        {!isSeeded && (
+          <button className="btn btn-primary" onClick={handleSeedData} disabled={seeding}>
+            {seeding ? 'Seeding...' : 'Seed Genius Sports Data'}
+          </button>
+        )}
       </div>
 
       <div className="stats-grid">
