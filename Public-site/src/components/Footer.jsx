@@ -7,18 +7,8 @@ export default function Footer() {
   const year = new Date().getFullYear();
   const [settings, setSettings] = useState({
     socialLinks: { instagram: '', twitter: '', facebook: '', youtube: '' },
-    partners: [
-      { name: 'AZAM', url: '#', isPrincipal: true },
-      { name: 'BK Arena', url: '#', isPrincipal: false },
-      { name: 'FERWABA', url: '#', isPrincipal: false }
-    ],
-    quickLinks: [
-      { name: 'Home', url: '/' },
-      { name: 'Season Schedule', url: '/schedule' },
-      { name: 'Team Roster', url: '/roster' },
-      { name: 'Official Store', url: '/store' },
-      { name: 'UGB TV', url: '/media' }
-    ]
+    partners: [],
+    quickLinks: []
   });
 
   useEffect(() => {
@@ -26,9 +16,9 @@ export default function Footer() {
       if (snap.exists()) {
         const data = snap.data();
         setSettings({
-          socialLinks: data.socialLinks || settings.socialLinks,
-          partners: data.partners || settings.partners,
-          quickLinks: data.quickLinks || settings.quickLinks
+          socialLinks: data.socialLinks || { instagram: '', twitter: '', facebook: '', youtube: '' },
+          partners: data.partners || [],
+          quickLinks: data.quickLinks || []
         });
       }
     });
@@ -53,11 +43,17 @@ export default function Footer() {
           <div className="footer__col">
             <h4 className="footer__heading">Our Partners</h4>
             <ul className="footer__list">
-              {settings.partners.map((p, i) => (
+              {settings.partners.length === 0 ? (
+                <li style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Stay tuned for our partners.</li>
+              ) : settings.partners.map((p, i) => (
                 <li key={i}>
-                  <a href={p.url || '#'} className={`footer__link ${p.isPrincipal ? 'footer__link--primary' : ''}`} target={p.url ? "_blank" : ""} rel="noopener noreferrer">
-                    <span className={`footer__dot ${p.isPrincipal ? 'footer__dot--primary' : ''}`}></span>
-                    {p.name}
+                  <a href={p.url || '#'} className={`footer__link ${p.isPrincipal ? 'footer__link--primary' : ''}`} target={p.url ? "_blank" : ""} rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    {p.logoURL ? (
+                      <img src={p.logoURL} alt={p.name} style={{ width: '1.5rem', height: '1.5rem', objectFit: 'contain' }} />
+                    ) : (
+                      <span className={`footer__dot ${p.isPrincipal ? 'footer__dot--primary' : ''}`}></span>
+                    )}
+                    <span style={{ flex: 1 }}>{p.name}</span>
                     {p.isPrincipal && <span className="footer__badge">Principal</span>}
                   </a>
                 </li>

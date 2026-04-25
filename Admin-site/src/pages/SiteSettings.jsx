@@ -9,14 +9,8 @@ export default function SiteSettings() {
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
     socialLinks: { instagram: '', twitter: '', facebook: '', youtube: '' },
-    partners: [{ name: 'AZAM', url: '', isPrincipal: true }],
-    quickLinks: [
-      { name: 'Home', url: '/' },
-      { name: 'Season Schedule', url: '/schedule' },
-      { name: 'Team Roster', url: '/roster' },
-      { name: 'Official Store', url: '/store' },
-      { name: 'UGB TV', url: '/media' }
-    ]
+    partners: [],
+    quickLinks: []
   });
 
   useEffect(() => {
@@ -47,12 +41,13 @@ export default function SiteSettings() {
 
   // Partners
   const addPartner = () => {
-    setSettings(s => ({ ...s, partners: [...s.partners, { name: '', url: '', isPrincipal: false }] }));
+    setSettings(s => ({ ...s, partners: [...s.partners, { name: '', url: '', logoURL: '', isPrincipal: false }] }));
   };
   const updatePartner = (index, field, value) => {
-    const newP = [...settings.partners];
-    newP[index][field] = value;
-    setSettings(s => ({ ...s, partners: newP }));
+    setSettings(s => ({
+      ...s,
+      partners: s.partners.map((p, i) => i === index ? { ...p, [field]: value } : p)
+    }));
   };
   const removePartner = async (index) => {
     const isConfirmed = await showConfirm('Are you sure you want to remove this partner?');
@@ -74,9 +69,10 @@ export default function SiteSettings() {
     setSettings(s => ({ ...s, quickLinks: [...s.quickLinks, { name: '', url: '' }] }));
   };
   const updateLink = (index, field, value) => {
-    const newL = [...settings.quickLinks];
-    newL[index][field] = value;
-    setSettings(s => ({ ...s, quickLinks: newL }));
+    setSettings(s => ({
+      ...s,
+      quickLinks: s.quickLinks.map((l, i) => i === index ? { ...l, [field]: value } : l)
+    }));
   };
   const removeLink = async (index) => {
     const isConfirmed = await showConfirm('Are you sure you want to remove this link?');
@@ -131,16 +127,19 @@ export default function SiteSettings() {
           <button type="button" onClick={addPartner} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--bg-lighter)' }}>+ Add Partner</button>
         </div>
         {settings.partners.map((p, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 2fr 3fr auto auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
-            <button type="button" onClick={() => movePartner(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === 0 ? 'default' : 'pointer', padding: '0.5rem' }}>▲</button>
-            <button type="button" onClick={() => movePartner(i, 1)} disabled={i === settings.partners.length - 1} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === settings.partners.length - 1 ? 'default' : 'pointer', padding: '0.5rem' }}>▼</button>
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 1.5fr 1.5fr 2fr auto auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem', background: 'var(--bg-lighter)', padding: '0.75rem', borderRadius: '0.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <button type="button" onClick={() => movePartner(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === 0 ? 'default' : 'pointer' }}>▲</button>
+              <button type="button" onClick={() => movePartner(i, 1)} disabled={i === settings.partners.length - 1} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === settings.partners.length - 1 ? 'default' : 'pointer' }}>▼</button>
+            </div>
             <input type="text" className="admin-form__input" placeholder="Partner Name" value={p.name} onChange={e => updatePartner(i, 'name', e.target.value)} required />
-            <input type="url" className="admin-form__input" placeholder="URL Link" value={p.url} onChange={e => updatePartner(i, 'url', e.target.value)} />
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
+            <input type="url" className="admin-form__input" placeholder="Website URL" value={p.url} onChange={e => updatePartner(i, 'url', e.target.value)} />
+            <input type="url" className="admin-form__input" placeholder="Logo URL" value={p.logoURL} onChange={e => updatePartner(i, 'logoURL', e.target.value)} />
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
               <input type="checkbox" checked={p.isPrincipal} onChange={e => updatePartner(i, 'isPrincipal', e.target.checked)} />
               Principal?
             </label>
-            <button type="button" onClick={() => removePartner(i)} style={{ background: 'transparent', color: 'var(--loss)', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>&times;</button>
+            <button type="button" onClick={() => removePartner(i)} style={{ background: 'transparent', color: 'var(--loss)', border: 'none', cursor: 'pointer', fontSize: '1.25rem' }}>&times;</button>
           </div>
         ))}
         <div style={{ marginBottom: '2rem' }}></div>
