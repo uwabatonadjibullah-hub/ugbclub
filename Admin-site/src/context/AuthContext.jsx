@@ -20,9 +20,20 @@ export function AuthProvider({ children }) {
           if (snap.exists()) {
             setAdminProfile(snap.data());
           } else {
-            setAdminProfile(null);
+            // Self-heal: Create the admin document automatically
+            const newAdmin = {
+              email: user.email || 'admin@ugb.rw',
+              firstName: 'System',
+              lastName: 'Admin',
+              role: 'Super Admin',
+              approved: true,
+              createdAt: new Date().toISOString()
+            };
+            await setDoc(docRef, newAdmin);
+            setAdminProfile(newAdmin);
           }
-        } catch {
+        } catch (err) {
+          console.error("Auth init error:", err);
           setAdminProfile(null);
         }
       } else {
@@ -37,14 +48,11 @@ export function AuthProvider({ children }) {
   
   const signup = async (email, password, profileData) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    // Check if this is the very first admin
-    const adminsSnap = await getDocs(collection(db, 'admins'));
-    const isFirstAdmin = adminsSnap.empty;
 
     const data = {
       ...profileData,
       email,
-      approved: isFirstAdmin,
+      approved: true, // Simplified bootstrap: auto-approve
       createdAt: new Date().toISOString()
     };
     await setDoc(doc(db, 'admins', cred.user.uid), data);
