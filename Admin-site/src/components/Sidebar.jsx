@@ -14,6 +14,7 @@ export default function Sidebar() {
         <NavLink to="/orders" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Customer Orders</NavLink>
         <NavLink to="/matches" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Manage Matches</NavLink>
         <NavLink to="/upload" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Upload Content</NavLink>
+        <NavLink to="/content" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Manage Content</NavLink>
         <NavLink to="/players" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Manage Players</NavLink>
         <NavLink to="/statistics" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Player Statistics</NavLink>
         <NavLink to="/payment" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Payment Settings</NavLink>

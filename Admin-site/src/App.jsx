@@ -14,6 +14,7 @@ import Orders from './pages/Orders';
 import Admins from './pages/Admins';
 import Matches from './pages/Matches';
 import Statistics from './pages/Statistics';
+import ManageContent from './pages/ManageContent';
 import SiteSettings from './pages/SiteSettings';
 import { ConfirmProvider } from './context/ConfirmContext';
 import './index.css';
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="/trade" element={<ProtectedRoute><TradeDashboard /></ProtectedRoute>} />
           <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
           <Route path="/upload" element={<ProtectedRoute><UploadContent /></ProtectedRoute>} />
+          <Route path="/content" element={<ProtectedRoute><ManageContent /></ProtectedRoute>} />
           <Route path="/players" element={<ProtectedRoute><ManagePlayers /></ProtectedRoute>} />
           <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
           <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
