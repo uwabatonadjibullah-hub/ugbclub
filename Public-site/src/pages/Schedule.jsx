@@ -73,9 +73,19 @@ export default function Schedule() {
                   <span className="schedule-date__month">{month}</span>
                 </div>
                 <div className="schedule-teams">
-                  <div className="team-logo team-logo--ugb team-logo--sm">UGB</div>
-                  <span className="match-vs-sm">{game.isAway ? '@' : 'VS'}</span>
-                  <div className="team-logo team-logo--opp team-logo--sm">{game.opponentAbbr || 'OPP'}</div>
+                  <div className="team-logo team-logo--ugb team-logo--sm" style={{ padding: 0, background: 'transparent' }}>
+                    <img src={game.ugbLogo || '/favicon-32x32.png'} alt="UGB" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  </div>
+                  <span className="match-vs-sm">{game.isHome ? 'VS' : '@'}</span>
+                  <div className="team-logo team-logo--opp team-logo--sm" style={{ padding: 0, background: 'transparent' }}>
+                    {game.opponentLogo ? (
+                      <img src={game.opponentLogo} alt={game.opponentAbbr || 'OPP'} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    ) : (
+                      <div style={{ background: '#334155', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f8fafc', fontWeight: 700, borderRadius: '4px' }}>
+                        {game.opponentAbbr || game.opponent?.substring(0, 3)?.toUpperCase() || 'OPP'}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="schedule-info">
                   <h3 className="schedule-info__name">{game.opponent || 'Opponent'}</h3>

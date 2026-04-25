@@ -8,8 +8,13 @@ export default function Matches() {
   const [editingId, setEditingId] = useState(null);
   
   const [formData, setFormData] = useState({
-    date: '', opponent: '', venue: '', time: '', isHome: true, status: 'upcoming', ugbScore: '', opponentScore: '', result: 'upcoming'
+    date: '', opponent: '', opponentLogo: '', venue: '', time: '', isHome: true, status: 'upcoming', ugbScore: '', opponentScore: '', result: 'upcoming', ugbLogo: '/favicon-32x32.png'
   });
+
+  const isFutureDate = (dateStr) => {
+    if (!dateStr) return false;
+    return new Date(dateStr) > new Date();
+  };
 
   useEffect(() => {
     const q = query(collection(db, 'schedule'), orderBy('date', 'desc'));
@@ -36,11 +41,11 @@ export default function Matches() {
     
     setIsAdding(false);
     setEditingId(null);
-    setFormData({ date: '', opponent: '', venue: '', time: '', isHome: true, status: 'upcoming', ugbScore: '', opponentScore: '', result: 'upcoming' });
+    setFormData({ date: '', opponent: '', opponentLogo: '', venue: '', time: '', isHome: true, status: 'upcoming', ugbScore: '', opponentScore: '', result: 'upcoming', ugbLogo: '/favicon-32x32.png' });
   };
 
   const editMatch = (m) => {
-    setFormData(m);
+    setFormData({ ...m, ugbLogo: m.ugbLogo || '/favicon-32x32.png', opponentLogo: m.opponentLogo || '' });
     setEditingId(m.id);
     setIsAdding(true);
   };
@@ -49,6 +54,12 @@ export default function Matches() {
     if (confirm('Delete this match?')) {
       await deleteDoc(doc(db, 'schedule', id));
     }
+  };
+
+  const getButtonText = () => {
+    if (editingId) return 'Update Match';
+    if (isFutureDate(formData.date)) return 'Schedule Match';
+    return 'Save Match';
   };
 
   return (
@@ -62,9 +73,15 @@ export default function Matches() {
 
       {isAdding && (
         <form className="admin-form" onSubmit={handleSave} style={{ marginBottom: '2rem' }}>
-          <div className="admin-form__group">
-            <label className="admin-form__label">Opponent</label>
-            <input type="text" className="admin-form__input" value={formData.opponent} onChange={e => setFormData({...formData, opponent: e.target.value})} required />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="admin-form__group">
+              <label className="admin-form__label">Opponent Team Name</label>
+              <input type="text" className="admin-form__input" value={formData.opponent} onChange={e => setFormData({...formData, opponent: e.target.value})} required />
+            </div>
+            <div className="admin-form__group">
+              <label className="admin-form__label">Opponent Logo URL (Optional)</label>
+              <input type="url" className="admin-form__input" placeholder="https://..." value={formData.opponentLogo} onChange={e => setFormData({...formData, opponentLogo: e.target.value})} />
+            </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="admin-form__group">
@@ -114,7 +131,7 @@ export default function Matches() {
               <option value="loss">Loss</option>
             </select>
           </div>
-          <button type="submit" className="btn btn-primary">{editingId ? 'Update Match' : 'Save Match'}</button>
+          <button type="submit" className="btn btn-primary">{getButtonText()}</button>
         </form>
       )}
 
@@ -135,7 +152,12 @@ export default function Matches() {
             {matches.map(m => (
               <tr key={m.id}>
                 <td>{m.date} {m.time}</td>
-                <td style={{ fontWeight: 700 }}>{m.opponent}</td>
+                <td style={{ fontWeight: 700 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {m.opponentLogo && <img src={m.opponentLogo} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />}
+                    {m.opponent}
+                  </div>
+                </td>
                 <td>{m.venue}</td>
                 <td><span style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'rgba(255,255,255,0.1)' }}>{m.status}</span></td>
                 <td>
