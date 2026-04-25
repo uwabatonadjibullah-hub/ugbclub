@@ -99,12 +99,24 @@ function VideoCard({ media, featured, onPlay, playing }) {
   // Cleanup timer on unmount
   useEffect(() => () => clearTimeout(timerRef.current), []);
 
+  // Extract YT ID if possible
+  const getYTThumb = (code) => {
+    if (!code) return null;
+    const match = code.match(/embed\/([^"?\s]+)/);
+    if (match && match[1]) {
+      return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+    }
+    return null;
+  };
+
+  const finalThumb = media.thumbnailURL || getYTThumb(media.embedCode) || 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=800&auto=format&fit=crop';
+
   return (
     <div className={`video-card${featured ? ' video-card--featured' : ''}`} onClick={handlePlay}>
-      {playing && media.videoURL ? (
+      {playing && (media.embedCode || media.videoURL) ? (
         <div className="video-card__player">
           {media.embedCode ? (
-            <div dangerouslySetInnerHTML={{ __html: media.embedCode }} />
+            <div className="embed-container" dangerouslySetInnerHTML={{ __html: media.embedCode }} />
           ) : (
             <video src={media.videoURL} controls autoPlay className="video-card__video" />
           )}
@@ -112,7 +124,7 @@ function VideoCard({ media, featured, onPlay, playing }) {
       ) : (
         <>
           <img
-            src={media.thumbnailURL || 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=800&auto=format&fit=crop'}
+            src={finalThumb}
             alt={media.title}
             className="video-card__thumb"
           />
