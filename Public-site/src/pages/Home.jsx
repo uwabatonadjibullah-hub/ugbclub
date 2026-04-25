@@ -5,6 +5,7 @@ import { db } from '../firebase/firebase';
 import { useCart } from '../context/CartContext';
 import SliderSection from '../components/SliderSection';
 import ProductCard from '../components/ProductCard';
+import PlayerCard from '../components/PlayerCard';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -134,39 +135,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* THE SQUAD SLIDER */}
       <section className="home-section">
         <div className="container">
-          <SliderSection
-            title="The Squad"
-            viewAllLabel="Full Roster"
-            onViewAll={() => navigate('/roster')}
-            scrollAmount={320}
-          >
-            {loading ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div> : players.length === 0 ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div> : players.map(player => (
-              <div key={player.id} className="player-card" onClick={() => navigate('/roster')}>
-                <div className="player-card__img">
-                  <img
-                    src={player.photoURL || 'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=400&auto=format&fit=crop'}
-                    alt={player.name}
-                  />
-                  <div className="player-card__overlay" />
-                  <span className="player-card__num">#{player.number}</span>
-                </div>
-                <div className="player-card__info">
-                  <span className="player-card__pos">#{player.number} | {player.position}</span>
-                  <h3 className="player-card__name">{player.name}</h3>
-                </div>
-              </div>
-            ))}
-            {/* View All Card */}
-            <div className="player-card player-card--view-all" onClick={() => navigate('/roster')}>
-              <div className="view-all-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-              </div>
-              <span>View All Players</span>
+          <div className="slider-section__header">
+            <div>
+              <p className="slider-section__subtitle">UGB Elite</p>
+              <h2 className="slider-section__title">The Squad</h2>
+              <div className="slider-section__bar"></div>
             </div>
-          </SliderSection>
+            <button className="view-all-btn" onClick={() => navigate('/roster')}>
+              Full Roster
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <div className="player-grid" style={{ marginTop: '2rem' }}>
+            {loading ? (
+              <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div>
+            ) : players.length === 0 ? (
+              <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div>
+            ) : (
+              players.slice(0, 4).map(player => (
+                <PlayerCard 
+                  key={player.id} 
+                  player={player} 
+                  onClick={() => navigate('/roster')}
+                />
+              ))
+            )}
+          </div>
+
+          <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+            <button className="btn btn--ghost" onClick={() => navigate('/roster')}>
+              View Full Team
+            </button>
+          </div>
         </div>
       </section>
 
