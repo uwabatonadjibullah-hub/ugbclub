@@ -4,6 +4,7 @@ import { collection, query, orderBy, limit, getDocs, where } from 'firebase/fire
 import { db } from '../firebase/firebase';
 import { useCart } from '../context/CartContext';
 import SliderSection from '../components/SliderSection';
+import ProductCard from '../components/ProductCard';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -169,42 +170,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* OFFICIAL MERCH SLIDER */}
       <section className="home-section home-section--dark-alt">
         <div className="container">
-          <SliderSection
-            title="Official Merch"
-            subtitle="Fresh Drops"
-            viewAllLabel="Shop All"
-            onViewAll={() => navigate('/store')}
-            scrollAmount={360}
-          >
-            {loading ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div> : products.length === 0 ? <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div> : products.map(product => (
-              <div key={product.id} className="product-card product-card--slider">
-                <div className="product-card__img">
-                  <img src={product.imageURL} alt={product.name} />
-                  {product.isNew && <span className="product-badge">NEW</span>}
-                </div>
-                <div className="product-card__body">
-                  <p className="product-card__cat">{product.category}</p>
-                  <h3 className="product-card__name">{product.name}</h3>
-                  <div className="product-card__footer">
-                    <span className="product-card__price">{new Intl.NumberFormat('en-RW').format(product.price)} RWF</span>
-                    <button
-                      className={`add-btn${addedId === product.id ? ' add-btn--added' : ''}`}
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      {addedId === product.id ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
-                      ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" /></svg>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </SliderSection>
+          <div className="slider-section__header">
+            <div>
+              <p className="slider-section__subtitle">Fresh Drops</p>
+              <h2 className="slider-section__title">Official Merch</h2>
+              <div className="slider-section__bar"></div>
+            </div>
+            <button className="view-all-btn" onClick={() => navigate('/store')}>
+              Shop All
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <div className="product-grid" style={{ marginTop: '2rem' }}>
+            {loading ? (
+              <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div>
+            ) : products.length === 0 ? (
+              <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No content available</div>
+            ) : (
+              products.map(product => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  onAdd={handleAddToCart} 
+                  isAdded={addedId === product.id} 
+                />
+              ))
+            )}
+          </div>
+          
+          <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+            <button className="btn btn--ghost" onClick={() => navigate('/store')}>
+              Visit Full Store
+            </button>
+          </div>
         </div>
       </section>
     </div>
