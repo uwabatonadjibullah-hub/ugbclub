@@ -172,19 +172,13 @@ export default function Home() {
 
       <section className="home-section home-section--dark-alt">
         <div className="container">
-          <div className="slider-section__header">
-            <div>
-              <p className="slider-section__subtitle">Fresh Drops</p>
-              <h2 className="slider-section__title">Official Merch</h2>
-              <div className="slider-section__bar"></div>
-            </div>
-            <button className="view-all-btn" onClick={() => navigate('/store')}>
-              Shop All
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-          </div>
-
-          <div className="product-grid" style={{ marginTop: '2rem' }}>
+          <SliderSection
+            title="Official Merch"
+            subtitle="Fresh Drops"
+            viewAllLabel="Shop All"
+            onViewAll={() => navigate('/store')}
+            scrollAmount={360}
+          >
             {loading ? (
               <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>Loading...</div>
             ) : products.length === 0 ? (
@@ -196,16 +190,11 @@ export default function Home() {
                   product={product} 
                   onAdd={handleAddToCart} 
                   isAdded={addedId === product.id} 
+                  className="product-card--slider"
                 />
               ))
             )}
-          </div>
-          
-          <div style={{ marginTop: '3rem', textAlign: 'center' }}>
-            <button className="btn btn--ghost" onClick={() => navigate('/store')}>
-              Visit Full Store
-            </button>
-          </div>
+          </SliderSection>
         </div>
       </section>
     </div>
