@@ -124,13 +124,13 @@ export default function SiteSettings() {
         {/* Partners */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <h3 style={{ color: 'var(--accent)' }}>Our Partners</h3>
-          <button type="button" onClick={addPartner} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--bg-lighter)' }}>+ Add Partner</button>
+          <button type="button" onClick={addPartner} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--accent)', color: 'var(--bg-dark)', fontWeight: 700, borderRadius: '4px' }}>+ Add Partner</button>
         </div>
         {settings.partners.map((p, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 1.5fr 1.5fr 2fr auto auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem', background: 'var(--bg-lighter)', padding: '0.75rem', borderRadius: '0.5rem' }}>
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 1.5fr 1.5fr 2fr auto auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem', background: 'var(--bg-lighter)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--bg-border)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <button type="button" onClick={() => movePartner(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === 0 ? 'default' : 'pointer' }}>▲</button>
-              <button type="button" onClick={() => movePartner(i, 1)} disabled={i === settings.partners.length - 1} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === settings.partners.length - 1 ? 'default' : 'pointer' }}>▼</button>
+              <button type="button" onClick={() => movePartner(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: i === 0 ? 'rgba(255,255,255,0.1)' : 'var(--accent)', border: 'none', cursor: i === 0 ? 'default' : 'pointer', fontSize: '1rem' }}>▲</button>
+              <button type="button" onClick={() => movePartner(i, 1)} disabled={i === settings.partners.length - 1} style={{ background: 'transparent', color: i === settings.partners.length - 1 ? 'rgba(255,255,255,0.1)' : 'var(--accent)', border: 'none', cursor: i === settings.partners.length - 1 ? 'default' : 'pointer', fontSize: '1rem' }}>▼</button>
             </div>
             <input type="text" className="admin-form__input" placeholder="Partner Name" value={p.name} onChange={e => updatePartner(i, 'name', e.target.value)} required />
             <input type="url" className="admin-form__input" placeholder="Website URL" value={p.url} onChange={e => updatePartner(i, 'url', e.target.value)} />
@@ -147,12 +147,12 @@ export default function SiteSettings() {
         {/* Quick Links */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <h3 style={{ color: 'var(--accent)' }}>Footer Quick Links</h3>
-          <button type="button" onClick={addLink} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--bg-lighter)' }}>+ Add Link</button>
+          <button type="button" onClick={addLink} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', background: 'var(--accent)', color: 'var(--bg-dark)', fontWeight: 700, borderRadius: '4px' }}>+ Add Link</button>
         </div>
         {settings.quickLinks.map((l, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr 2fr auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
-            <button type="button" onClick={() => moveLink(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === 0 ? 'default' : 'pointer', padding: '0.5rem' }}>▲</button>
-            <button type="button" onClick={() => moveLink(i, 1)} disabled={i === settings.quickLinks.length - 1} style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: i === settings.quickLinks.length - 1 ? 'default' : 'pointer', padding: '0.5rem' }}>▼</button>
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr 2fr auto', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem', background: 'var(--bg-lighter)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--bg-border)' }}>
+            <button type="button" onClick={() => moveLink(i, -1)} disabled={i === 0} style={{ background: 'transparent', color: i === 0 ? 'rgba(255,255,255,0.1)' : 'var(--accent)', border: 'none', cursor: i === 0 ? 'default' : 'pointer', fontSize: '1rem' }}>▲</button>
+            <button type="button" onClick={() => moveLink(i, 1)} disabled={i === settings.quickLinks.length - 1} style={{ background: 'transparent', color: i === settings.quickLinks.length - 1 ? 'rgba(255,255,255,0.1)' : 'var(--accent)', border: 'none', cursor: i === settings.quickLinks.length - 1 ? 'default' : 'pointer', fontSize: '1rem' }}>▼</button>
             <input type="text" className="admin-form__input" placeholder="Link Display Text" value={l.name} onChange={e => updateLink(i, 'name', e.target.value)} required />
             <input type="text" className="admin-form__input" placeholder="URL (e.g. /schedule or https://...)" value={l.url} onChange={e => updateLink(i, 'url', e.target.value)} required />
             <button type="button" onClick={() => removeLink(i)} style={{ background: 'transparent', color: 'var(--loss)', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>&times;</button>
