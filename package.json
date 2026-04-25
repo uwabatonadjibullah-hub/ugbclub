@@ -1,0 +1,10 @@
+{
+  "name": "ugb-platform",
+  "version": "1.0.0",
+  "scripts": {
+    "build:public": "cd Public-site && npm run build",
+    "build:admin": "cd Admin-site && npm run build",
+    "build": "npm run build:public && npm run build:admin && node build-merge.js",
+    "deploy": "firebase deploy --only hosting,firestore,database"
+  }
+}

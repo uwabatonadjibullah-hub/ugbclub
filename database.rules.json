@@ -1,0 +1,15 @@
+{
+  "rules": {
+    ".read": "true",
+    "stats": {
+      ".read": "true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).child('approved').val() == true"
+    },
+    "presence": {
+      ".read": "true",
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    }
+  }
+}

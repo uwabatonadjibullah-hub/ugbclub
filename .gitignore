@@ -1,0 +1,7 @@
+node_modules/
+dist/
+Public-site/dist/
+Admin-site/dist/
+.env
+.env.local
+.DS_Store
