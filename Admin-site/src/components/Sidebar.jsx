@@ -12,9 +12,12 @@ export default function Sidebar() {
         <NavLink to="/" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`} end>Dashboard</NavLink>
         <NavLink to="/trade" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Trade Dashboard</NavLink>
         <NavLink to="/orders" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Customer Orders</NavLink>
+        <NavLink to="/matches" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Manage Matches</NavLink>
         <NavLink to="/upload" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Upload Content</NavLink>
         <NavLink to="/players" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Manage Players</NavLink>
+        <NavLink to="/statistics" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Player Statistics</NavLink>
         <NavLink to="/payment" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Payment Settings</NavLink>
+        <NavLink to="/admins" className={({isActive}) => `sidebar__link ${isActive ? 'active' : ''}`}>Admins</NavLink>
       </nav>
     </aside>
   );

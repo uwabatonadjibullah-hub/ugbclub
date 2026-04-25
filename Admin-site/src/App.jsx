@@ -11,6 +11,9 @@ import UploadContent from './pages/UploadContent';
 import ManagePlayers from './pages/ManagePlayers';
 import PaymentMethods from './pages/PaymentMethods';
 import Orders from './pages/Orders';
+import Admins from './pages/Admins';
+import Matches from './pages/Matches';
+import Statistics from './pages/Statistics';
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -42,7 +45,10 @@ export default function App() {
           <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
           <Route path="/upload" element={<ProtectedRoute><UploadContent /></ProtectedRoute>} />
           <Route path="/players" element={<ProtectedRoute><ManagePlayers /></ProtectedRoute>} />
+          <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
+          <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />
+          <Route path="/admins" element={<ProtectedRoute><Admins /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
