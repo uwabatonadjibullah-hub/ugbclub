@@ -72,3 +72,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .admin-table th, .admin-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--bg-border); }
 .admin-table th { background: rgba(30,41,59,0.5); font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+  
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999; }  
+.modal-content { background: var(--bg-dark); border: 1px solid var(--bg-border); padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); } 

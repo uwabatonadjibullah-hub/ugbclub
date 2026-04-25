@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function ManagePlayers() {
+  const { showConfirm } = useConfirm();
   const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({ name: '', number: '', position: 'GUARD', photoURL: '' });
   const [msg, setMsg] = useState('');
@@ -27,7 +29,8 @@ export default function ManagePlayers() {
   };
 
   const handleDepart = async (id) => {
-    if (confirm('Mark this player as departed?')) {
+    const isConfirmed = await showConfirm('Mark this player as departed?');
+    if (isConfirmed) {
       await updateDoc(doc(db, 'players', id), { status: 'departed', departedDate: new Date().toISOString() });
     }
   };

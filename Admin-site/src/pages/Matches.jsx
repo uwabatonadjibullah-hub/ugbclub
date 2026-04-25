@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function Matches() {
+  const { showConfirm } = useConfirm();
   const [matches, setMatches] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -51,7 +53,8 @@ export default function Matches() {
   };
 
   const deleteMatch = async (id) => {
-    if (confirm('Delete this match?')) {
+    const isConfirmed = await showConfirm('Delete this match?');
+    if (isConfirmed) {
       await deleteDoc(doc(db, 'schedule', id));
     }
   };

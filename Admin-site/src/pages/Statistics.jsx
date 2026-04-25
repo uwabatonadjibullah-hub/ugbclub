@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, doc, updateDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function Statistics() {
   const [players, setPlayers] = useState([]);
@@ -80,6 +81,7 @@ export default function Statistics() {
 }
 
 function PlayerGameLogs({ player, matches }) {
+  const { showConfirm, showAlert } = useConfirm();
   const [logs, setLogs] = useState(player.gameLogs || []);
   const [formData, setFormData] = useState({ matchId: '', pts: '', reb: '', ast: '' });
   const [editingIndex, setEditingIndex] = useState(null);
@@ -102,7 +104,10 @@ function PlayerGameLogs({ player, matches }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!formData.matchId) return alert('Please select a match.');
+    if (!formData.matchId) {
+      await showAlert('Please select a match.');
+      return;
+    }
     
     let updatedLogs = [...logs];
     const logEntry = {
@@ -135,7 +140,8 @@ function PlayerGameLogs({ player, matches }) {
   };
 
   const deleteLog = async (index) => {
-    if (!confirm('Remove this game log?')) return;
+    const isConfirmed = await showConfirm('Remove this game log?');
+    if (!isConfirmed) return;
     const updatedLogs = logs.filter((_, i) => i !== index);
     const newStats = recalculateAverages(updatedLogs);
     await updateDoc(doc(db, 'players', player.id), {

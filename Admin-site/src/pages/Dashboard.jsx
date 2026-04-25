@@ -3,8 +3,10 @@ import { collection, onSnapshot, query, where, doc, getDoc, setDoc, addDoc } fro
 import { db } from '../firebase/firebase';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { seedData } from '../data/seedData';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function Dashboard() {
+  const { showConfirm, showAlert } = useConfirm();
   const [stats, setStats] = useState({ players: 0, products: 0, orders: 0, views: 0 });
   const [topPlayers, setTopPlayers] = useState([]);
   const [mediaViews, setMediaViews] = useState([]);
@@ -40,7 +42,8 @@ export default function Dashboard() {
   }, []);
 
   const handleSeedData = async () => {
-    if (!confirm('Are you sure you want to seed the Genius Sports data? This is a one-time action.')) return;
+    const isConfirmed = await showConfirm('Are you sure you want to seed the Genius Sports data? This is a one-time action.');
+    if (!isConfirmed) return;
     setSeeding(true);
     try {
       // Seed players
@@ -59,7 +62,7 @@ export default function Dashboard() {
       await setDoc(doc(db, 'siteSettings', 'seeding'), { seeded: true });
       setIsSeeded(true);
     } catch (e) {
-      alert('Seeding failed: ' + e.message);
+      await showAlert('Seeding failed: ' + e.message);
     }
     setSeeding(false);
   };

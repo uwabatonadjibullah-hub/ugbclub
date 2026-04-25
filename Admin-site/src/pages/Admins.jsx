@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useAuth } from '../context/AuthContext';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function Admins() {
   const { adminProfile } = useAuth();
+  const { showConfirm, showAlert } = useConfirm();
   const [admins, setAdmins] = useState([]);
   const isSuperAdmin = adminProfile?.role === 'Super Admin';
 
@@ -17,10 +19,11 @@ export default function Admins() {
 
   const toggleApproval = async (id, currentStatus) => {
     if (!isSuperAdmin) {
-      alert("Only Super Admins can change approval status.");
+      await showAlert("Only Super Admins can change approval status.");
       return;
     }
-    if (confirm(`Are you sure you want to ${currentStatus ? 'revoke' : 'grant'} approval?`)) {
+    const isConfirmed = await showConfirm(`Are you sure you want to ${currentStatus ? 'revoke' : 'grant'} approval?`);
+    if (isConfirmed) {
       await updateDoc(doc(db, 'admins', id), { approved: !currentStatus });
     }
   };

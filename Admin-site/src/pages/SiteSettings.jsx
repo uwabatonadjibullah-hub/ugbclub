@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function SiteSettings() {
+  const { showAlert, showConfirm } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
@@ -36,7 +38,7 @@ export default function SiteSettings() {
     setSaving(true);
     await setDoc(doc(db, 'siteSettings', 'footer'), settings, { merge: true });
     setSaving(false);
-    alert('Site settings saved successfully!');
+    await showAlert('Site settings saved successfully!');
   };
 
   const handleSocialChange = (platform, value) => {
@@ -52,8 +54,11 @@ export default function SiteSettings() {
     newP[index][field] = value;
     setSettings(s => ({ ...s, partners: newP }));
   };
-  const removePartner = (index) => {
-    setSettings(s => ({ ...s, partners: s.partners.filter((_, i) => i !== index) }));
+  const removePartner = async (index) => {
+    const isConfirmed = await showConfirm('Are you sure you want to remove this partner?');
+    if (isConfirmed) {
+      setSettings(s => ({ ...s, partners: s.partners.filter((_, i) => i !== index) }));
+    }
   };
 
   // Quick Links
@@ -65,8 +70,11 @@ export default function SiteSettings() {
     newL[index][field] = value;
     setSettings(s => ({ ...s, quickLinks: newL }));
   };
-  const removeLink = (index) => {
-    setSettings(s => ({ ...s, quickLinks: s.quickLinks.filter((_, i) => i !== index) }));
+  const removeLink = async (index) => {
+    const isConfirmed = await showConfirm('Are you sure you want to remove this link?');
+    if (isConfirmed) {
+      setSettings(s => ({ ...s, quickLinks: s.quickLinks.filter((_, i) => i !== index) }));
+    }
   };
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading settings...</div>;

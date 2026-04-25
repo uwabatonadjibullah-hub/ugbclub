@@ -15,6 +15,7 @@ import Admins from './pages/Admins';
 import Matches from './pages/Matches';
 import Statistics from './pages/Statistics';
 import SiteSettings from './pages/SiteSettings';
+import { ConfirmProvider } from './context/ConfirmContext';
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -37,8 +38,9 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter basename="/admin">
-        <Routes>
+      <ConfirmProvider>
+        <BrowserRouter basename="/admin">
+          <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -51,9 +53,10 @@ export default function App() {
           <Route path="/payment" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><SiteSettings /></ProtectedRoute>} />
           <Route path="/admins" element={<ProtectedRoute><Admins /></ProtectedRoute>} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </BrowserRouter>
+      </ConfirmProvider>
     </AuthProvider>
   );
 }
